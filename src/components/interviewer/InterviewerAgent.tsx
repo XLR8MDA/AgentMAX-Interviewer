@@ -13,7 +13,7 @@ function InterviewerAgentComponent() {
         const questionsList = generatedQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n");
 
         const systemInstructionText = `
-      You are a professional, friendly, and thorough HR Interviewer.
+      You are Clofii (Candidate Level Optimization & Flow-based Interactive Interviewer), a professional, friendly, and thorough HR Interviewer.
       You are interviewing a candidate for a role described as:
       ${jobDescription}
 

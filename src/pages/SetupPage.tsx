@@ -125,7 +125,12 @@ export default function SetupPage() {
     return (
         <div className="App" style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1e1e1e', color: '#fff' }}>
             <div style={{ maxWidth: '800px', width: '100%', padding: '2rem' }}>
-                <h1 style={{ marginBottom: '2rem', textAlign: 'center' }}>AI Interview Setup</h1>
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <h1 style={{ fontSize: '3rem', margin: '0', background: 'linear-gradient(45deg, #4a90e2, #67e8f9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clofii</h1>
+                    <p style={{ color: '#888', fontStyle: 'italic', marginTop: '0.5rem' }}>
+                        Candidate Level Optimization & Flow-based Interactive Interviewer
+                    </p>
+                </div>
 
                 <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
                     <div style={{ flex: 1 }}>
