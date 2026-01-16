@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../lib/interview-store";
+import { FileUploader } from "../components/FileUploader";
 import "../App.scss"; // Reuse existing styles for now or creating specific ones
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
@@ -123,70 +124,113 @@ export default function SetupPage() {
     };
 
     return (
-        <div className="App" style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1e1e1e', color: '#fff' }}>
-            <div style={{ maxWidth: '800px', width: '100%', padding: '2rem' }}>
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <h1 style={{ fontSize: '3rem', margin: '0', background: 'linear-gradient(45deg, #4a90e2, #67e8f9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clofii</h1>
-                    <p style={{ color: '#888', fontStyle: 'italic', marginTop: '0.5rem' }}>
-                        Candidate Level Optimization & Flow-based Interactive Interviewer
-                    </p>
-                </div>
+        <div className="App">
+            <div className="streaming-console">
+                <main style={{ padding: '2rem', overflowY: 'auto' }}>
+                    <div style={{ maxWidth: '900px', width: '100%', margin: '0 auto' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                            <h1 style={{
+                                fontSize: '4rem',
+                                margin: '0',
+                                fontWeight: 700,
+                                background: 'linear-gradient(45deg, var(--Blue-400), var(--accent-blue))',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                letterSpacing: '-0.02em'
+                            }}>Clofii</h1>
+                            <p style={{ color: 'var(--gray-300)', fontStyle: 'italic', marginTop: '0.5rem', fontSize: '1.1rem' }}>
+                                Candidate Level Optimization & Flow-based Interactive Interviewer
+                            </p>
+                        </div>
 
-                <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-                    <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', marginBottom: '8px' }}>Paste Resume</label>
-                        <textarea
-                            style={{ width: '100%', height: '300px', padding: '10px', borderRadius: '8px', border: '1px solid #444', background: '#2d2d2d', color: '#fff' }}
-                            value={resumeText}
-                            onChange={(e) => setResumeText(e.target.value)}
-                            placeholder="Paste candidate resume here..."
-                        />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', marginBottom: '8px' }}>Job Description</label>
-                        <textarea
-                            style={{ width: '100%', height: '300px', padding: '10px', borderRadius: '8px', border: '1px solid #444', background: '#2d2d2d', color: '#fff' }}
-                            value={jobDescription}
-                            onChange={(e) => setJobDescription(e.target.value)}
-                            placeholder="Paste job description here..."
-                        />
-                    </div>
-                </div>
+                        <div style={{ display: 'flex', gap: '30px', marginBottom: '30px', alignItems: 'stretch' }}>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                <label style={{ display: 'block', marginBottom: '12px', fontWeight: 'bold', color: 'var(--gray-200)' }}>Upload Resume (PDF/Word)</label>
+                                <FileUploader />
+                            </div>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                <label style={{ display: 'block', marginBottom: '12px', fontWeight: 'bold', color: 'var(--gray-200)' }}>Job Description</label>
+                                <textarea
+                                    style={{
+                                        width: '100%',
+                                        flex: 1,
+                                        minHeight: '300px',
+                                        padding: '16px',
+                                        borderRadius: '12px',
+                                        border: '1px solid var(--gray-600)',
+                                        background: 'var(--Neutral-10)',
+                                        color: 'var(--text)',
+                                        fontFamily: 'var(--font-family)',
+                                        fontSize: '0.9rem',
+                                        lineHeight: '1.5',
+                                        outline: 'none',
+                                        transition: 'border-color 0.3s ease'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = 'var(--Blue-500)'}
+                                    onBlur={(e) => e.target.style.borderColor = 'var(--gray-600)'}
+                                    value={jobDescription}
+                                    onChange={(e) => setJobDescription(e.target.value)}
+                                    placeholder="Paste job description here..."
+                                />
+                            </div>
+                        </div>
 
-                {error && (
-                    <div style={{ color: '#ff6b6b', marginBottom: '1rem', textAlign: 'center' }}>
-                        {error}
-                        {showFallback && (
-                            <div style={{ marginTop: '10px' }}>
-                                <button
-                                    onClick={useFallback}
-                                    style={{ background: 'transparent', border: '1px solid #4a90e2', color: '#4a90e2', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
-                                >
-                                    Proceed with Default Questions
-                                </button>
+                        {error && (
+                            <div style={{
+                                color: 'var(--Red-400)',
+                                marginBottom: '1.5rem',
+                                textAlign: 'center',
+                                padding: '10px',
+                                background: 'rgba(255, 70, 0, 0.1)',
+                                borderRadius: '8px',
+                                border: '1px solid var(--Red-700)'
+                            }}>
+                                {error}
+                                {showFallback && (
+                                    <div style={{ marginTop: '10px' }}>
+                                        <button
+                                            onClick={useFallback}
+                                            style={{
+                                                background: 'transparent',
+                                                border: '1px solid var(--Blue-500)',
+                                                color: 'var(--Blue-400)',
+                                                padding: '8px 16px',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontFamily: 'var(--font-family)'
+                                            }}
+                                        >
+                                            Proceed with Default Questions
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </div>
-                )}
 
-                <div style={{ textAlign: 'center' }}>
-                    <button
-                        className="action-button"
-                        style={{
-                            padding: '12px 24px',
-                            fontSize: '1.2rem',
-                            backgroundColor: isGenerating ? '#555' : '#4a90e2',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: isGenerating ? 'not-allowed' : 'pointer',
-                            color: 'white'
-                        }}
-                        onClick={handleGenerate}
-                        disabled={isGenerating}
-                    >
-                        {isGenerating ? "Preparing Interview..." : "Start Interview"}
-                    </button>
-                </div>
+                        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                            <button
+                                className="action-button"
+                                style={{
+                                    padding: '16px 48px',
+                                    fontSize: '1.2rem',
+                                    backgroundColor: isGenerating ? 'var(--gray-600)' : 'var(--Blue-500)',
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    cursor: isGenerating ? 'not-allowed' : 'pointer',
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    fontFamily: 'var(--font-family)',
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: isGenerating ? 'none' : '0 4px 15px rgba(31, 148, 255, 0.3)'
+                                }}
+                                onClick={handleGenerate}
+                                disabled={isGenerating}
+                            >
+                                {isGenerating ? "Preparing Interview..." : "Start Interview"}
+                            </button>
+                        </div>
+                    </div>
+                </main>
             </div>
         </div>
     );
