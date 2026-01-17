@@ -14,19 +14,94 @@
  * limitations under the License.
  */
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SetupPage from "./pages/SetupPage";
-import InterviewPage from "./pages/InterviewPage";
+import { useRef, useState } from "react";
 import "./App.scss";
+import { LiveAPIProvider } from "./contexts/LiveAPIContext";
+import SidePanel from "./components/side-panel/SidePanel";
+import { Altair } from "./components/altair/Altair";
+import ControlTray from "./components/control-tray/ControlTray";
+import cn from "classnames";
+import { LiveClientOptions } from "./types";
+
+const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
+if (typeof API_KEY !== "string") {
+  throw new Error("set REACT_APP_GEMINI_API_KEY in .env");
+}
+
+const apiOptions: LiveClientOptions = {
+  apiKey: API_KEY,
+};
+
+import { useLiveAPIContext } from "./contexts/LiveAPIContext";
+import { useEffect } from "react";
+
+function AppContent({
+  videoRef,
+  videoStream,
+  setVideoStream
+}: {
+  videoRef: React.RefObject<HTMLVideoElement>,
+  videoStream: MediaStream | null,
+  setVideoStream: (s: MediaStream | null) => void
+}) {
+  const { connect, connected } = useLiveAPIContext();
+
+  useEffect(() => {
+    // Attempt auto-connect on mount
+    // Note: Browser might block audio/video autostart without interaction, 
+    // but the system instruction is set and the UI will show connection state.
+    if (!connected) {
+      connect();
+    }
+  }, [connect, connected]);
+
+  return (
+    <div className="streaming-console">
+      <SidePanel />
+      <main>
+        <div className="main-app-area">
+          {/* APP goes here */}
+          <Altair />
+          <video
+            className={cn("stream", {
+              hidden: !videoRef.current || !videoStream,
+            })}
+            ref={videoRef}
+            autoPlay
+            playsInline
+          />
+        </div>
+
+        <ControlTray
+          videoRef={videoRef}
+          supportsVideo={true}
+          onVideoStreamChange={setVideoStream}
+          enableEditingSettings={true}
+        >
+          {/* put your own buttons here */}
+        </ControlTray>
+      </main>
+    </div>
+  );
+}
 
 function App() {
+  // this video reference is used for displaying the active stream, whether that is the webcam or screen capture
+  // feel free to style as you see fit
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // either the screen capture, the video or null, if null we hide it
+  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<SetupPage />} />
-        <Route path="/interview" element={<InterviewPage />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="App">
+      <LiveAPIProvider options={apiOptions}>
+        <AppContent
+          videoRef={videoRef}
+          videoStream={videoStream}
+          setVideoStream={setVideoStream}
+        />
+      </LiveAPIProvider>
+    </div>
   );
 }
 
