@@ -22,6 +22,7 @@ import {
   Modality,
   Type,
 } from "@google/genai";
+import { INTERVIEWER_INSTRUCTIONS } from "../../interviewer-config";
 
 const declaration: FunctionDeclaration = {
   name: "render_altair",
@@ -53,7 +54,7 @@ function AltairComponent() {
       systemInstruction: {
         parts: [
           {
-            text: 'You are my helpful assistant. Any time I ask you for a graph call the "render_altair" function I have provided you. Dont ask for additional information just make your best judgement.',
+            text: INTERVIEWER_INSTRUCTIONS,
           },
         ],
       },
@@ -96,6 +97,16 @@ function AltairComponent() {
     client.on("toolcall", onToolCall);
     return () => {
       client.off("toolcall", onToolCall);
+    };
+  }, [client]);
+
+  useEffect(() => {
+    const onSetupComplete = () => {
+      client.send([{ text: "Hello" }]);
+    };
+    client.on("setupcomplete", onSetupComplete);
+    return () => {
+      client.off("setupcomplete", onSetupComplete);
     };
   }, [client]);
 
