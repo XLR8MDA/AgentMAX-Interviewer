@@ -1,5 +1,5 @@
 {
-  "name": "agent-max",
+  "name": "multimodal-live-api-web-console",
   "version": "0.1.0",
   "dependencies": {
     "@google/genai": "^0.14.0",

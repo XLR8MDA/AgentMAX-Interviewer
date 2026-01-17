@@ -22,7 +22,6 @@ import {
   Modality,
   Type,
 } from "@google/genai";
-import { INTERVIEWER_INSTRUCTIONS } from "../../interviewer-config";
 
 const declaration: FunctionDeclaration = {
   name: "render_altair",
@@ -44,7 +43,6 @@ function AltairComponent() {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
 
-
   useEffect(() => {
     setModel("models/gemini-2.0-flash-exp");
     setConfig({
@@ -55,11 +53,12 @@ function AltairComponent() {
       systemInstruction: {
         parts: [
           {
-            text: INTERVIEWER_INSTRUCTIONS,
+            text: 'You are my helpful assistant. Any time I ask you for a graph call the "render_altair" function I have provided you. Dont ask for additional information just make your best judgement.',
           },
         ],
       },
       tools: [
+        // there is a free-tier quota for search
         { googleSearch: {} },
         { functionDeclarations: [declaration] },
       ],

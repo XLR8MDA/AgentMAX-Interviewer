@@ -32,59 +32,6 @@ const apiOptions: LiveClientOptions = {
   apiKey: API_KEY,
 };
 
-import { useLiveAPIContext } from "./contexts/LiveAPIContext";
-import { useEffect } from "react";
-
-function AppContent({
-  videoRef,
-  videoStream,
-  setVideoStream
-}: {
-  videoRef: React.RefObject<HTMLVideoElement>,
-  videoStream: MediaStream | null,
-  setVideoStream: (s: MediaStream | null) => void
-}) {
-  const { connect, connected } = useLiveAPIContext();
-
-  useEffect(() => {
-    // Attempt auto-connect on mount
-    // Note: Browser might block audio/video autostart without interaction, 
-    // but the system instruction is set and the UI will show connection state.
-    if (!connected) {
-      connect();
-    }
-  }, [connect, connected]);
-
-  return (
-    <div className="streaming-console">
-      <SidePanel />
-      <main>
-        <div className="main-app-area">
-          {/* APP goes here */}
-          <Altair />
-          <video
-            className={cn("stream", {
-              hidden: !videoRef.current || !videoStream,
-            })}
-            ref={videoRef}
-            autoPlay
-            playsInline
-          />
-        </div>
-
-        <ControlTray
-          videoRef={videoRef}
-          supportsVideo={true}
-          onVideoStreamChange={setVideoStream}
-          enableEditingSettings={true}
-        >
-          {/* put your own buttons here */}
-        </ControlTray>
-      </main>
-    </div>
-  );
-}
-
 function App() {
   // this video reference is used for displaying the active stream, whether that is the webcam or screen capture
   // feel free to style as you see fit
@@ -95,11 +42,32 @@ function App() {
   return (
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
-        <AppContent
-          videoRef={videoRef}
-          videoStream={videoStream}
-          setVideoStream={setVideoStream}
-        />
+        <div className="streaming-console">
+          <SidePanel />
+          <main>
+            <div className="main-app-area">
+              {/* APP goes here */}
+              <Altair />
+              <video
+                className={cn("stream", {
+                  hidden: !videoRef.current || !videoStream,
+                })}
+                ref={videoRef}
+                autoPlay
+                playsInline
+              />
+            </div>
+
+            <ControlTray
+              videoRef={videoRef}
+              supportsVideo={true}
+              onVideoStreamChange={setVideoStream}
+              enableEditingSettings={true}
+            >
+              {/* put your own buttons here */}
+            </ControlTray>
+          </main>
+        </div>
       </LiveAPIProvider>
     </div>
   );
