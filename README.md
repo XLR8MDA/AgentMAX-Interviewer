@@ -132,11 +132,14 @@ Your app is ready to be deployed!
 
 To host this on Cloudflare Pages:
 
-1.  **Framework Preset**: Select `Create React App`.
-2.  **Build Command**: `npm run build`.
-3.  **Build Output Directory**: `build`.
-4.  **Environment Variables**: Add `REACT_APP_GEMINI_API_KEY` with your API key in the Cloudflare Pages dashboard.
-5.  **Node Version**: Ensure you're using a modern Node version (v18+ recommended).
+1.  **Connect Your Repository**: Link your GitHub repository to Cloudflare Pages.
+2.  **Framework Preset**: Select `Create React App`.
+3.  **Build Command**: `npm run build`.
+4.  **Build Output Directory**: `build`.
+5.  **Environment Variables**: In the Cloudflare Pages dashboard, add `REACT_APP_GEMINI_API_KEY` with your Gemini API key.
+6.  **Node Version**: Set to `18` or higher in the environment variables (`NODE_VERSION=18`).
+
+**Important**: Do NOT set a custom deploy command in Cloudflare Pages. Leave it empty or use the default. Cloudflare Pages will automatically deploy the `build` directory after running the build command.
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
