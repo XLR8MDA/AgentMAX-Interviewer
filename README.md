@@ -128,6 +128,16 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
+## Hosting on Cloudflare Pages
+
+To host this on Cloudflare Pages:
+
+1.  **Framework Preset**: Select `Create React App`.
+2.  **Build Command**: `npm run build`.
+3.  **Build Output Directory**: `build`.
+4.  **Environment Variables**: Add `REACT_APP_GEMINI_API_KEY` with your API key in the Cloudflare Pages dashboard.
+5.  **Node Version**: Ensure you're using a modern Node version (v18+ recommended).
+
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 _This is an experiment showcasing AgentMAX, not an official Google product. We’ll do our best to support and maintain this experiment but your mileage may vary. We encourage open sourcing projects as a way of learning from each other. Please respect our and other creators' rights, including copyright and trademark rights when present, when sharing these works and creating derivative work. If you want more info on Google's policy, you can find that [here](https://developers.google.com/terms/site-policies)._
