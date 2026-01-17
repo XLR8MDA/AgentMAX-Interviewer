@@ -32,6 +32,7 @@ const apiOptions: LiveClientOptions = {
   apiKey: API_KEY,
 };
 
+
 function AppContent({
   videoRef,
   videoStream,
