@@ -15,7 +15,7 @@ export default function VoiceSelector() {
 
   useEffect(() => {
     const voiceName =
-      config.speechConfig?.voiceConfig?.prebuiltVoiceConfig?.voiceName ||
+      config?.speechConfig?.voiceConfig?.prebuiltVoiceConfig?.voiceName ||
       "Atari02";
     const voiceOption = { value: voiceName, label: voiceName };
     setSelectedOption(voiceOption);
@@ -29,7 +29,7 @@ export default function VoiceSelector() {
   const updateConfig = useCallback(
     (voiceName: string) => {
       setConfig({
-        ...config,
+        ...(config || {}),
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: {
@@ -63,8 +63,8 @@ export default function VoiceSelector() {
             backgroundColor: isFocused
               ? "var(--Neutral-30)"
               : isSelected
-              ? "var(--Neutral-20)"
-              : undefined,
+                ? "var(--Neutral-20)"
+                : undefined,
           }),
         }}
         value={selectedOption}

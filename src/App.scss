@@ -1,61 +1,60 @@
 :root {
-  --text: white;
-  --gray-200: #b4b8bb;
+  --text: #3c4043;
+  --gray-200: #5f6368;
   --gray-300: #80868b;
-  --gray-500: #5f6368;
-  --gray-600: #444444;
-  --gray-700: #202020;
-  --gray-800: #171717;
-  --gray-900: #111111;
-  --gray-1000: #0a0a0a;
-  --border-stroke: #444444;
-  --accent-blue: rgb(161, 228, 242);
-  --accent-blue-active-bg: #001233;
-  --accent-blue-active: #98beff;
-  --accent-blue-headers: #448dff;
-  --accent-green: rgb(168, 218, 181);
+  --gray-500: #bdc1c6;
+  --gray-600: #dadce0;
+  --gray-700: #e8eaed;
+  --gray-800: #f1f3f4;
+  --gray-900: #f8f9fa;
+  --gray-1000: #ffffff;
 
-  --midnight-blue: rgb(0, 18, 51);
-  --blue-30: #99beff;
+  --border-stroke: rgba(26, 115, 232, 0.1);
+  --accent-blue: #1a73e8;
+  --accent-blue-active-bg: #e8f0fe;
+  --accent-blue-active: #1967d2;
+  --accent-blue-headers: #174ea6;
+  --accent-green: #34a853;
+  --accent-red: #ea4335;
+  --accent-yellow: #fbbc04;
 
-  --accent-red: #ff4600;
+  --midnight-blue: #174ea6;
+  --blue-30: #e8f0fe;
 
   --background: var(--gray-900);
   --color: var(--text);
 
-  scrollbar-color: var(--gray-600) var(--gray-900);
+  scrollbar-color: var(--gray-500) var(--gray-800);
   scrollbar-width: thin;
 
   --font-family: "Space Mono", monospace;
 
-  /* */
-  --Neutral-00: #000;
-  --Neutral-5: #181a1b;
-  --Neutral-10: #1c1f21;
-  --Neutral-15: #232729;
-  --Neutral-20: #2a2f31;
-  --Neutral-30: #404547;
-  --Neutral-50: #707577;
-  --Neutral-60: #888d8f;
-  --Neutral-80: #c3c6c7;
-  --Neutral-90: #e1e2e3;
+  /* Refined Neutral Palette */
+  --Neutral-00: #ffffff;
+  --Neutral-5: #f8f9fa;
+  --Neutral-10: #f1f3f4;
+  --Neutral-15: #e8eaed;
+  --Neutral-20: #dee1e5;
+  --Neutral-30: #bdc1c6;
+  --Neutral-50: #80868b;
+  --Neutral-60: #5f6368;
+  --Neutral-80: #3c4043;
+  --Neutral-90: #202124;
 
-  --Green-500: #0d9c53;
-  --Green-700: #025022;
-
-  --Blue-400: #80c1ff;
-  --Blue-500: #1f94ff;
-  --Blue-800: #0f3557;
-
-  --Red-400: #ff9c7a;
-  --Red-500: #ff4600;
-  --Red-600: #e03c00;
-  --Red-700: #bd3000;
+  /* Google Blue Spectrum + Sci-fi Azure */
+  --Blue-400: #4285f4;
+  --Blue-500: #1a73e8;
+  --Blue-600: #1967d2;
+  --Blue-700: #174ea6;
+  --Sci-Fi-Glow: rgba(26, 115, 232, 0.4);
+  --Sci-Fi-Cyan: #00e5ff;
 }
 
 body {
   font-family: "Space Mono", monospace;
-  background: var(--Neutral-30);
+  background: var(--Neutral-5);
+  margin: 0;
+  overflow: hidden;
 }
 
 .material-symbols-outlined {
@@ -112,28 +111,57 @@ body {
   flex-direction: column;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-}
+@media (prefers-reduced-motion: no-preference) {}
 
 .streaming-console {
-  background: var(--Neutral-15);
-  color: var(--gray-300);
+  background: var(--Neutral-5);
+  color: var(--text);
   display: flex;
   height: 100vh;
   width: 100vw;
+  position: relative;
+  overflow: hidden;
+
+  // Sci-fi Grid Background
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      linear-gradient(var(--gray-700) 1px, transparent 1px),
+      linear-gradient(90deg, var(--gray-700) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(26, 115, 232, 0.05), transparent);
+    animation: scanLine 8s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
 
   a,
   a:visited,
   a:active {
-    color: var(--gray-300);
+    color: var(--Blue-500);
   }
 
   .disabled {
+    opacity: 0.6;
+    filter: grayscale(0.5);
     pointer-events: none;
-
-    > * {
-      pointer-events: none;
-    }
   }
 
   main {
@@ -143,16 +171,32 @@ body {
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-    gap: 1rem;
-    max-width: 100%;
-    overflow: hidden;
+    z-index: 2;
+    padding: 2rem;
+    gap: 2rem;
   }
 
   .main-app-area {
     display: flex;
     flex: 1;
+    width: 100%;
     align-items: center;
     justify-content: center;
+    position: relative;
+
+    // Sci-fi Frame
+    &::before {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border: 1px solid var(--Blue-500);
+      opacity: 0.1;
+      border-radius: 40px;
+      pointer-events: none;
+    }
   }
 
   .function-call {
@@ -164,10 +208,193 @@ body {
   }
 }
 
+@keyframes scanLine {
+  0% {
+    top: -100%;
+  }
+
+  100% {
+    top: 100%;
+  }
+}
+
 /* video player */
 .stream {
   flex-grow: 1;
   max-width: 90%;
   border-radius: 32px;
   max-height: fit-content;
+  box-shadow: 0 30px 60px -12px rgba(26, 115, 232, 0.1), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+  border: 4px solid white;
+  background: black;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.01);
+  }
+}
+
+/* welcome screen */
+.welcome-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  // Sci-fi background for welcome
+  &::before {
+    content: "";
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle at center, var(--blue-30) 0%, transparent 70%);
+    animation: drift 20s infinite alternate ease-in-out;
+    opacity: 0.5;
+  }
+
+  .welcome-content {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--gray-600);
+    padding: 4rem;
+    border-radius: 48px;
+    text-align: center;
+    max-width: 550px;
+    width: 90%;
+    box-shadow: 0 40px 100px -20px rgba(26, 115, 232, 0.15);
+    animation: fadeInScale 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 10;
+
+    .logo-container {
+      margin-bottom: 2rem;
+
+      .logo-icon {
+        font-size: 5rem;
+        background: linear-gradient(135deg, var(--Blue-400), var(--Blue-600));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 10px var(--Sci-Fi-Glow));
+
+        &.success {
+          background: linear-gradient(135deg, var(--accent-green), #0d9c53);
+          -webkit-background-clip: text;
+          background-clip: text;
+        }
+      }
+
+      h1 {
+        font-size: 4rem;
+        margin: 0;
+        letter-spacing: -2px;
+        color: var(--Neutral-90);
+        font-weight: 800;
+      }
+    }
+
+    .subtitle {
+      color: var(--Blue-500);
+      font-size: 1.25rem;
+      margin-bottom: 3rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    .info-box {
+      background: var(--Neutral-5);
+      padding: 2rem;
+      border-radius: 24px;
+      margin-bottom: 3rem;
+      border: 1px solid var(--gray-600);
+
+      &.success {
+        background: #f1f8f4;
+        border-color: rgba(52, 168, 83, 0.2);
+
+        p {
+          color: #137333;
+        }
+      }
+
+      p {
+        margin: 0.75rem 0;
+        color: var(--gray-200);
+        font-size: 1.1rem;
+      }
+
+      .note {
+        font-size: 0.9rem;
+        color: var(--gray-300);
+        font-weight: 400;
+      }
+    }
+
+    .start-button {
+      background: var(--Blue-500);
+      color: white;
+      border: none;
+      padding: 1.5rem 3rem;
+      border-radius: 100px;
+      font-size: 1.35rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 20px 40px -10px rgba(26, 115, 232, 0.3);
+
+      &.secondary {
+        background: var(--gray-800);
+        color: var(--text);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+
+        &:hover {
+          background: var(--gray-700);
+        }
+      }
+
+      &:hover {
+        background: var(--Blue-600);
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 30px 60px -15px rgba(26, 115, 232, 0.4);
+      }
+
+      &:active {
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate(-10%, -10%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(10%, 10%) rotate(5deg);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }

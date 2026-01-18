@@ -32,6 +32,7 @@ export type ControlTrayProps = {
   supportsVideo: boolean;
   onVideoStreamChange?: (stream: MediaStream | null) => void;
   enableEditingSettings?: boolean;
+  onStop?: () => void;
 };
 
 type MediaStreamButtonProps = {
@@ -61,9 +62,10 @@ const MediaStreamButton = memo(
 function ControlTray({
   videoRef,
   children,
-  onVideoStreamChange = () => {},
+  onVideoStreamChange = () => { },
   supportsVideo,
   enableEditingSettings,
+  onStop = () => { },
 }: ControlTrayProps) {
   const videoStreams = [useWebcam(), useScreenCapture()];
   const [activeVideoStream, setActiveVideoStream] =
@@ -77,12 +79,25 @@ function ControlTray({
 
   const { client, connected, connect, disconnect, volume } =
     useLiveAPIContext();
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Resume Playback/Recording when unpausing
+  useEffect(() => {
+    if (connected && !isPaused && muted) {
+      setMuted(false);
+    }
+  }, [connected, isPaused, muted]);
 
   useEffect(() => {
     if (!connected && connectButtonRef.current) {
       connectButtonRef.current.focus();
     }
+    // Reset pause state on disconnect
+    if (!connected) {
+      setIsPaused(false);
+    }
   }, [connected]);
+
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--volume",
@@ -99,7 +114,8 @@ function ControlTray({
         },
       ]);
     };
-    if (connected && !muted && audioRecorder) {
+    // Only record/send if connected AND NOT paused AND NOT muted
+    if (connected && !muted && !isPaused && audioRecorder) {
       audioRecorder.on("data", onData).on("volume", setInVolume).start();
     } else {
       audioRecorder.stop();
@@ -107,7 +123,7 @@ function ControlTray({
     return () => {
       audioRecorder.off("data", onData).off("volume", setInVolume);
     };
-  }, [connected, client, muted, audioRecorder]);
+  }, [connected, client, muted, isPaused, audioRecorder]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -133,17 +149,17 @@ function ControlTray({
         const data = base64.slice(base64.indexOf(",") + 1, Infinity);
         client.sendRealtimeInput([{ mimeType: "image/jpeg", data }]);
       }
-      if (connected) {
+      if (connected && !isPaused) {
         timeoutId = window.setTimeout(sendVideoFrame, 1000 / 0.5);
       }
     }
-    if (connected && activeVideoStream !== null) {
+    if (connected && !isPaused && activeVideoStream !== null) {
       requestAnimationFrame(sendVideoFrame);
     }
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [connected, activeVideoStream, client, videoRef]);
+  }, [connected, isPaused, activeVideoStream, client, videoRef]);
 
   //handler for swapping from one video-stream to the next
   const changeStreams = (next?: UseMediaStreamResult) => async () => {
@@ -157,6 +173,14 @@ function ControlTray({
     }
 
     videoStreams.filter((msr) => msr !== next).forEach((msr) => msr.stop());
+  };
+
+  const handlePlayPause = () => {
+    if (!connected) {
+      connect();
+    } else {
+      setIsPaused(!isPaused);
+    }
   };
 
   return (
@@ -175,7 +199,7 @@ function ControlTray({
         </button>
 
         <div className="action-button no-action outlined">
-          <AudioPulse volume={volume} active={connected} hover={false} />
+          <AudioPulse volume={volume} active={connected && !isPaused} hover={false} />
         </div>
 
         {supportsVideo && (
@@ -200,18 +224,35 @@ function ControlTray({
       </nav>
 
       <div className={cn("connection-container", { connected })}>
+        {connected && (
+          <button
+            className="action-button stop-button"
+            onClick={() => {
+              disconnect();
+              onStop();
+            }}
+            title="Stop Interview"
+          >
+            <span className="material-symbols-outlined">stop</span>
+          </button>
+        )}
         <div className="connection-button-container">
           <button
             ref={connectButtonRef}
-            className={cn("action-button connect-toggle", { connected })}
-            onClick={connected ? disconnect : connect}
+            className={cn("action-button connect-toggle", {
+              connected,
+              paused: isPaused
+            })}
+            onClick={handlePlayPause}
           >
             <span className="material-symbols-outlined filled">
-              {connected ? "pause" : "play_arrow"}
+              {connected && !isPaused ? "pause" : "play_arrow"}
             </span>
           </button>
         </div>
-        <span className="text-indicator">Streaming</span>
+        <span className="text-indicator">
+          {connected ? (isPaused ? "Paused" : "Streaming") : "Start"}
+        </span>
       </div>
       {enableEditingSettings ? <SettingsDialog /> : ""}
     </section>

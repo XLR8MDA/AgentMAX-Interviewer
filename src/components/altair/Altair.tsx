@@ -40,7 +40,16 @@ const declaration: FunctionDeclaration = {
   },
 };
 
-function AltairComponent() {
+const concludeDeclaration: FunctionDeclaration = {
+  name: "conclude_interview",
+  description: "Signals that the interview is officially over and the session should be finalized.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+  },
+};
+
+function AltairComponent({ onConclude = () => { } }: { onConclude?: () => void }) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
 
@@ -61,7 +70,7 @@ function AltairComponent() {
       tools: [
         // there is a free-tier quota for search
         { googleSearch: {} },
-        { functionDeclarations: [declaration] },
+        { functionDeclarations: [declaration, concludeDeclaration] },
       ],
     });
   }, [setConfig, setModel]);
@@ -77,6 +86,13 @@ function AltairComponent() {
       if (fc) {
         const str = (fc.args as any).json_graph;
         setJSONString(str);
+      }
+
+      const conclude = toolCall.functionCalls.find(
+        (fc) => fc.name === concludeDeclaration.name
+      );
+      if (conclude) {
+        onConclude();
       }
       // send data for the response of your tool call
       // in this case Im just saying it was successful

@@ -19,7 +19,7 @@ export default function SettingsDialog() {
   const [open, setOpen] = useState(false);
   const { config, setConfig, connected } = useLiveAPIContext();
   const functionDeclarations: FunctionDeclaration[] = useMemo(() => {
-    if (!Array.isArray(config.tools)) {
+    if (!config || !Array.isArray(config.tools)) {
       return [];
     }
     return (config.tools as Tool[])
@@ -33,7 +33,7 @@ export default function SettingsDialog() {
 
   // system instructions can come in many types
   const systemInstruction = useMemo(() => {
-    if (!config.systemInstruction) {
+    if (!config || !config.systemInstruction) {
       return "";
     }
     if (typeof config.systemInstruction === "string") {
@@ -58,7 +58,7 @@ export default function SettingsDialog() {
   const updateConfig: FormEventHandler<HTMLTextAreaElement> = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
       const newConfig: LiveConnectConfig = {
-        ...config,
+        ...(config || {}),
         systemInstruction: event.target.value,
       };
       setConfig(newConfig);
@@ -68,6 +68,7 @@ export default function SettingsDialog() {
 
   const updateFunctionDescription = useCallback(
     (editedFdName: string, newDescription: string) => {
+      if (!config) return;
       const newConfig: LiveConnectConfig = {
         ...config,
         tools:

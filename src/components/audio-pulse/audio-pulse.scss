@@ -5,27 +5,27 @@
   align-items: center;
   transition: all 0.5s;
 
-  & > div {
-    background-color: var(--Neutral-30);
+  &>div {
+    background-color: var(--gray-600);
     border-radius: 1000px;
     width: 4px;
     min-height: 4px;
-    border-radius: 1000px;
     transition: height 0.1s;
   }
 
-  &.hover > div {
+  &.hover>div {
     animation: hover 1.4s infinite alternate ease-in-out;
   }
 
   height: 4px;
-  transition: opacity 0.333s;
+  transition: all 0.333s;
 
   &.active {
     opacity: 1;
 
-    & > div {
-      background-color: var(--Neutral-80);
+    &>div {
+      background-color: var(--Blue-500);
+      box-shadow: 0 0 8px var(--Sci-Fi-Glow);
     }
   }
 }

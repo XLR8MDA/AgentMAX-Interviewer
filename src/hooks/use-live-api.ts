@@ -25,7 +25,7 @@ import { LiveConnectConfig } from "@google/genai";
 export type UseLiveAPIResults = {
   client: GenAILiveClient;
   setConfig: (config: LiveConnectConfig) => void;
-  config: LiveConnectConfig;
+  config: LiveConnectConfig | null;
   model: string;
   setModel: (model: string) => void;
   connected: boolean;
@@ -39,7 +39,7 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
 
   const [model, setModel] = useState<string>("models/gemini-2.0-flash-exp");
-  const [config, setConfig] = useState<LiveConnectConfig>({});
+  const [config, setConfig] = useState<LiveConnectConfig | null>(null);
   const [connected, setConnected] = useState(false);
   const [volume, setVolume] = useState(0);
 
@@ -97,7 +97,8 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
 
   const connect = useCallback(async () => {
     if (!config) {
-      throw new Error("config has not been set");
+      console.warn("Config not set, skipping connection");
+      return;
     }
     client.disconnect();
     await client.connect(model, config);

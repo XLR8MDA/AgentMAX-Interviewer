@@ -19,7 +19,7 @@ export default function ResponseModalitySelector() {
   const updateConfig = useCallback(
     (modality: "audio" | "text") => {
       setConfig({
-        ...config,
+        ...(config || {}),
         responseModalities: [
           modality === "audio" ? Modality.AUDIO : Modality.TEXT,
         ],
@@ -49,8 +49,8 @@ export default function ResponseModalitySelector() {
             backgroundColor: isFocused
               ? "var(--Neutral-30)"
               : isSelected
-              ? "var(--Neutral-20)"
-              : undefined,
+                ? "var(--Neutral-20)"
+                : undefined,
           }),
         }}
         defaultValue={selectedOption}

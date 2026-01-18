@@ -17,6 +17,7 @@
 import { useRef, useState, useEffect } from "react";
 import "./App.scss";
 import { LiveAPIProvider, useLiveAPIContext } from "./contexts/LiveAPIContext";
+import { useLoggerStore } from "./lib/store-logger";
 import SidePanel from "./components/side-panel/SidePanel";
 import { Altair } from "./components/altair/Altair";
 import ControlTray from "./components/control-tray/ControlTray";
@@ -42,24 +43,73 @@ function AppContent({
   videoStream: MediaStream | null,
   setVideoStream: (s: MediaStream | null) => void
 }) {
-  const { connect, connected } = useLiveAPIContext();
+  const { connect, connected, disconnect } = useLiveAPIContext();
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const { clearLogs } = useLoggerStore();
 
   useEffect(() => {
-    // Attempt auto-connect on mount
-    // Note: Browser might block audio/video autostart without interaction, 
-    // but the system instruction is set and the UI will show connection state.
-    if (!connected) {
+    if (hasInteracted && !connected && !isFinished) {
       connect();
     }
-  }, [connect, connected]);
+  }, [connect, connected, hasInteracted, isFinished]);
+
+  const handleStop = () => {
+    setHasInteracted(false);
+    setIsFinished(false);
+    clearLogs();
+  };
 
   return (
     <div className="streaming-console">
+      {!hasInteracted && !isFinished && (
+        <div className="welcome-screen">
+          <div className="welcome-content">
+            <div className="logo-container">
+              <span className="material-symbols-outlined logo-icon">psychology</span>
+              <h1>AgentMAX</h1>
+            </div>
+            <p className="subtitle">Your AI-Powered HR Interviewer</p>
+            <div className="info-box">
+              <p>Ready to begin your 10-question evaluation?</p>
+              <p className="note">Please ensure your microphone and camera are ready.</p>
+            </div>
+            <button className="start-button" onClick={() => setHasInteracted(true)}>
+              <span>Start Interview</span>
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isFinished && (
+        <div className="welcome-screen finished">
+          <div className="welcome-content">
+            <div className="logo-container">
+              <span className="material-symbols-outlined logo-icon success">verified</span>
+              <h1>Great Job!</h1>
+            </div>
+            <p className="subtitle">Interview Successfully Completed</p>
+            <div className="info-box success">
+              <p>Your responses have been recorded.</p>
+              <p className="note">AgentMAX has successfully finalized the evaluation process. You may now close this window or return to the main menu.</p>
+            </div>
+            <button className="start-button secondary" onClick={handleStop}>
+              <span>Return to Menu</span>
+              <span className="material-symbols-outlined">home</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       <SidePanel />
       <main>
         <div className="main-app-area">
           {/* APP goes here */}
-          <Altair />
+          <Altair onConclude={() => {
+            setIsFinished(true);
+            disconnect();
+          }} />
           <video
             className={cn("stream", {
               hidden: !videoRef.current || !videoStream,
@@ -75,6 +125,7 @@ function AppContent({
           supportsVideo={true}
           onVideoStreamChange={setVideoStream}
           enableEditingSettings={true}
+          onStop={handleStop}
         >
           {/* put your own buttons here */}
         </ControlTray>
