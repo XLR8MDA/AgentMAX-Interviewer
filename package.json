@@ -1,6 +1,9 @@
 {
   "name": "agent-max",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=18 <23"
+  },
   "dependencies": {
     "@google/genai": "^0.14.0",
     "classnames": "^2.5.1",
@@ -24,6 +27,7 @@
     "start-https": "HTTPS=true react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "deploy": "npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
