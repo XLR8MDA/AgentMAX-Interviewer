@@ -114,7 +114,7 @@ function AltairComponent({ onConclude = () => { } }: { onConclude?: () => void }
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client]);
+  }, [client, onConclude]);
 
   useEffect(() => {
     const onSetupComplete = () => {

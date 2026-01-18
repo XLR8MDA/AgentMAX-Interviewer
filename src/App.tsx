@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import "./App.scss";
 import { LiveAPIProvider, useLiveAPIContext } from "./contexts/LiveAPIContext";
 import { useLoggerStore } from "./lib/store-logger";
@@ -54,11 +54,16 @@ function AppContent({
     }
   }, [connect, connected, hasInteracted, isFinished]);
 
-  const handleStop = () => {
+  const handleStop = useCallback(() => {
     setHasInteracted(false);
     setIsFinished(false);
     clearLogs();
-  };
+  }, [clearLogs]);
+
+  const handleConclude = useCallback(() => {
+    setIsFinished(true);
+    disconnect();
+  }, [disconnect]);
 
   return (
     <div className="streaming-console">
@@ -106,10 +111,7 @@ function AppContent({
       <main>
         <div className="main-app-area">
           {/* APP goes here */}
-          <Altair onConclude={() => {
-            setIsFinished(true);
-            disconnect();
-          }} />
+          <Altair onConclude={handleConclude} />
           <video
             className={cn("stream", {
               hidden: !videoRef.current || !videoStream,
