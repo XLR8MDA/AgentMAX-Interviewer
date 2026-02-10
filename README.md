@@ -1,146 +1,72 @@
-# AgentMAX
+# AgentMAX: AI-Powered HR Interviewer
 
-This repository contains a react-based starter app for using the [Live API](<[https://ai.google.dev/gemini-api](https://ai.google.dev/api/multimodal-live)>) over a websocket. It provides modules for streaming audio playback, recording user media such as from a microphone, webcam or screen capture as well as a unified log view to aid in development of your application.
+AgentMAX is a premium, real-time AI interviewing platform built using the **Gemini 2.0 Multimodal Live API**. It simulates a professional HR interview experience with a structured 10-question protocol and a high-fidelity futuristic interface.
 
-[![Live API Demo](readme/thumbnail.png)](https://www.youtube.com/watch?v=J_q7JY1XxFE)
+![AgentMAX UI](https://img.shields.io/badge/UI-Google--Inspired--Sci--Fi-blue)
+![Built With](https://img.shields.io/badge/Built%20With-Gemini%202.0-orange)
+![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
-Watch the demo of the Live API [here](https://www.youtube.com/watch?v=J_q7JY1XxFE).
+---
 
-## Usage
+## 🚀 Key Features
 
-To get started, [create a free Gemini API key](https://aistudio.google.com/apikey) and add it to the `.env` file. Then:
+### 📋 Structured 10-Question Protocol
+* **Automated Flow**: Follows a strict HR protocol, evaluating candidates through 10 targeted questions.
+* **Contextual Responses**: The agent maintains context throughout the session, adapting its follow-ups based on candidate answers.
+* **Automated Conclusion**: Leveraging a custom `conclude_interview` tool, the agent automatically finalizes the session and transitions to a completion screen once the protocol is finished.
 
-```
-$ npm install && npm start
-```
+### 🎨 Futuristic "Google-Inspired" Interface
+* **Light Mode Aesthetics**: A clean, professional palette using Google's signature blues and off-whites.
+* **Sci-Fi UI Infrastructure**:
+    * **Animated HUD**: Subtle vertical scanning lines and glowing UI frames around video feeds.
+    * **Grid Workspace**: A dynamic, interactive background grid that enhances the technical feel.
+    * **Audio Pulse Display**: Real-time visualization of the AI's voice with azure glows and pulsating animations.
 
-We have provided several example applications on other branches of this repository:
+### ⚙️ Seamless Interview Lifecycle
+* **Interaction Shield**: A "Start Interview" overlay ensures browser audio permissions are granted before the AI initiates contact, preventing muted greetings.
+* **Pause/Resume**: Efficiently pause the interview (muting mic/audio) without losing session state or resetting progress.
+* **Clean Data Handling**: Automatically wipes conversation logs and session state upon stopping or completing an interview to ensure privacy and a fresh start for the next candidate.
 
-New demos with GenAI SDK:
+---
 
-- [demos/proactive-audio](https://github.com/google-gemini/multimodal-live-api-web-console/tree/demos/proactive-audio) - demonstrates the Live API's [proactive audio feature](https://ai.google.dev/gemini-api/docs/live-guide#proactive-audio)
+## 🛠 Technical Stack
 
+* **Core**: React, TypeScript
+* **Intelligence**: Gemini 2.0 Multimodal Live API
+* **Styling**: SCSS (Scoped components with modern CSS variables)
+* **Real-time Engine**: WebSockets for multimodal streaming (Audio, Video, Tools)
+* **Visuals**: Vega Lite for dynamic graph rendering in the console
 
-Original demos:
+---
 
-- [demos/GenExplainer](https://github.com/google-gemini/multimodal-live-api-web-console/tree/demos/genexplainer)
-- [demos/GenWeather](https://github.com/google-gemini/multimodal-live-api-web-console/tree/demos/genweather)
-- [demos/GenList](https://github.com/google-gemini/multimodal-live-api-web-console/tree/demos/genlist)
+## 🏁 Getting Started
 
-## Example
+### 1. Prerequisites
+*   An API key from [Google AI Studio](https://aistudio.google.com/).
+*   Node.js (v18+)
 
-Below is an example of an entire application that will use Google Search grounding and then render graphs using [vega-embed](https://github.com/vega/vega-embed):
-
-```typescript
-import { type FunctionDeclaration, SchemaType } from "@google/generative-ai";
-import { useEffect, useRef, useState, memo } from "react";
-import vegaEmbed from "vega-embed";
-import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
-
-export const declaration: FunctionDeclaration = {
-  name: "render_altair",
-  description: "Displays an altair graph in json format.",
-  parameters: {
-    type: SchemaType.OBJECT,
-    properties: {
-      json_graph: {
-        type: SchemaType.STRING,
-        description:
-          "JSON STRING representation of the graph to render. Must be a string, not a json object",
-      },
-    },
-    required: ["json_graph"],
-  },
-};
-
-export function Altair() {
-  const [jsonString, setJSONString] = useState<string>("");
-  const { client, setConfig } = useLiveAPIContext();
-
-  useEffect(() => {
-    setConfig({
-      model: "models/gemini-2.0-flash-exp",
-      systemInstruction: {
-        parts: [
-          {
-            text: 'You are my helpful assistant. Any time I ask you for a graph call the "render_altair" function I have provided you. Dont ask for additional information just make your best judgement.',
-          },
-        ],
-      },
-      tools: [{ googleSearch: {} }, { functionDeclarations: [declaration] }],
-    });
-  }, [setConfig]);
-
-  useEffect(() => {
-    const onToolCall = (toolCall: ToolCall) => {
-      console.log(`got toolcall`, toolCall);
-      const fc = toolCall.functionCalls.find(
-        (fc) => fc.name === declaration.name
-      );
-      if (fc) {
-        const str = (fc.args as any).json_graph;
-        setJSONString(str);
-      }
-    };
-    client.on("toolcall", onToolCall);
-    return () => {
-      client.off("toolcall", onToolCall);
-    };
-  }, [client]);
-
-  const embedRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (embedRef.current && jsonString) {
-      vegaEmbed(embedRef.current, JSON.parse(jsonString));
-    }
-  }, [embedRef, jsonString]);
-  return <div className="vega-embed" ref={embedRef} />;
-}
+### 2. Environment Setup
+Create a `.env` file in the root directory:
+```env
+REACT_APP_GEMINI_API_KEY=your_api_key_here
 ```
 
-## development
+### 3. Installation & Run
+```bash
+npm install
+npm start
+```
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-Project consists of:
+---
 
-- an Event-emitting websocket-client to ease communication between the websocket and the front-end
-- communication layer for processing audio in and out
-- a boilerplate view for starting to build your apps and view logs
+## 🏗 Deployment
+This project is optimized for **Cloudflare Pages**. It includes strict ESLint compliance and optimized build scripts to ensure a smooth CI/CD pipeline.
 
-## Available Scripts
+```bash
+npm run build
+```
 
-In the project directory, you can run:
+---
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-## Hosting on Cloudflare Pages
-
-To host this on Cloudflare Pages:
-
-1.  **Connect Your Repository**: Link your GitHub repository to Cloudflare Pages.
-2.  **Framework Preset**: Select `Create React App`.
-3.  **Build Command**: `npm run build`.
-4.  **Build Output Directory**: `build`.
-5.  **Environment Variables**: In the Cloudflare Pages dashboard, add `REACT_APP_GEMINI_API_KEY` with your Gemini API key.
-6.  **Node Version**: Set to `18` or higher in the environment variables (`NODE_VERSION=18`).
-
-**Important**: Do NOT set a custom deploy command in Cloudflare Pages. Leave it empty or use the default. Cloudflare Pages will automatically deploy the `build` directory after running the build command.
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-_This is an experiment showcasing AgentMAX, not an official Google product. We’ll do our best to support and maintain this experiment but your mileage may vary. We encourage open sourcing projects as a way of learning from each other. Please respect our and other creators' rights, including copyright and trademark rights when present, when sharing these works and creating derivative work. If you want more info on Google's policy, you can find that [here](https://developers.google.com/terms/site-policies)._
+## 📜 License
+Copyright 2024 Google LLC. Licensed under the Apache License, Version 2.0.

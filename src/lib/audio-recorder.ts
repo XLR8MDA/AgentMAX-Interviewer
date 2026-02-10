@@ -58,11 +58,20 @@ export class AudioRecorder extends EventEmitter {
       const workletName = "audio-recorder-worklet";
       const src = createWorketFromSrc(workletName, AudioRecordingWorklet);
 
-      await this.audioContext.audioWorklet.addModule(src);
+      console.log("Loading AudioWorklet module from src...");
+      try {
+        await this.audioContext.audioWorklet.addModule(src);
+        console.log("AudioWorklet module loaded successfully.");
+      } catch (e) {
+        console.error("Failed to load AudioWorklet module:", e);
+        throw e;
+      }
+
       this.recordingWorklet = new AudioWorkletNode(
         this.audioContext,
         workletName,
       );
+      console.log("AudioWorkletNode created:", workletName);
 
       this.recordingWorklet.port.onmessage = async (ev: MessageEvent) => {
         // worklet processes recording floats and messages converted buffer

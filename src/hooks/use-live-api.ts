@@ -38,7 +38,7 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
   const client = useMemo(() => new GenAILiveClient(options), [options]);
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
 
-  const [model, setModel] = useState<string>("models/gemini-2.0-flash-exp");
+  const [model, setModel] = useState<string>("models/gemini-2.5-flash-native-audio-preview-12-2025");
   const [config, setConfig] = useState<LiveConnectConfig | null>(null);
   const [connected, setConnected] = useState(false);
   const [volume, setVolume] = useState(0);
@@ -100,6 +100,7 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
       console.warn("Config not set, skipping connection");
       return;
     }
+    console.log("Connecting to model:", model);
     client.disconnect();
     await client.connect(model, config);
   }, [client, config, model]);

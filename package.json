@@ -26,6 +26,7 @@
   "scripts": {
     "start-https": "HTTPS=true react-scripts start",
     "start": "react-scripts start",
+    "dev": "npm start",
     "build": "react-scripts build",
     "deploy": "npm run build",
     "test": "react-scripts test",
